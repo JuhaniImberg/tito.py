@@ -1,12 +1,15 @@
 from collections import OrderedDict
 
+from tito.errors import InvalidCommandError, MalformedAddressError
 from tito.data.commands import commands
 from tito.data.registers import registers
 from tito.data.symbols import symbols
 from .binarycommand import BinaryCommand
 
 class IRCommand(object):
-    def __init__(self, tokens):
+    def __init__(self, number, raw, tokens):
+        self.number = number
+        self.raw = raw
         self.label = None
         self.op = None
         self.rj = None
@@ -73,6 +76,10 @@ class IR(object):
         for ind, line in enumerate(self.ir_code):
             gen = BinaryCommand()
             self.binary_code.append(gen)
+
+            if line.op not in commands:
+                raise InvalidCommandError(line.op, line.number, line.raw)
+
             gen["op"].set(commands[line.op][0])
             gen["m"].set(["=", None, "@"].index(line.m))
 
@@ -96,7 +103,7 @@ class IR(object):
             elif gen["m"].value == 0:
                 gen["addr"].set(int(line.addr))
             else:
-                raise Exception("Unable to make sense of addr value {} {}".format(ind, line))
+                raise MalformedAddressError(line.number, line.raw)
 
     def __repr__(self):
         ret = ""

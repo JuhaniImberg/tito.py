@@ -1,5 +1,7 @@
 from collections import OrderedDict
 
+from tito.errors import StructOverflowError
+
 class Field(object):
     def __init__(self, size):
         self.size = size
@@ -7,7 +9,7 @@ class Field(object):
 
     def set(self, value):
         if abs(value) > 2 ** self.size - 1:
-            raise Exception("Overflow")
+            raise StructOverflowError()
         self.value = value
 
     def get(self, offset):

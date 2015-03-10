@@ -1,6 +1,7 @@
 import re
 
 from tito.data.commands import commands
+from tito.errors import MalformedLineError
 from .ir import IR, IRCommand
 
 class Parser(object):
@@ -19,28 +20,29 @@ class Parser(object):
             tokens = list(filter(lambda x: len(x) > 0, tokens))
             if len(tokens) == 0:
                 continue
-            if self.fake_commands(ir, tokens):
+            if self.data_commands(ir, tokens):
                 pass
-            elif self.command(ir, code_lines, tokens):
+            elif self.command(ir, ind, line, code_lines, tokens):
                 code_lines += 1
             else:
-                raise Exception("Line {}, '{}' is bork".format(ind, line))
+                raise MalformedLineError(ind, line)
         return ir
 
-    def command(self, ir, ind, tokens):
-        line = IRCommand(tokens)
+    def command(self, ir, actual_ind, line, code_ind, tokens):
+        line = IRCommand(actual_ind, line, tokens)
         ir.add_line(line)
         if line.label is not None:
-            ir.add_label(line.label, ind)
+            ir.add_label(line.label, code_ind)
         return line.op is not None
 
-    def fake_commands(self, ir, tokens):
+    def data_commands(self, ir, tokens):
         if len(tokens) != 3:
             return False
         try:
             val = int(tokens[2])
         except ValueError:
             return False
+
         if tokens[1] == 'EQU':
             ir.add_equ(tokens[0], val)
         elif tokens[1] == 'DC':
@@ -51,4 +53,5 @@ class Parser(object):
             pass
         else:
             return False
+
         return True
