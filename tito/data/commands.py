@@ -31,7 +31,7 @@ class AddrLessFetchesOP(OP):
 class SvcOP(OP):
     pass
 
-codes = {
+commands = {
     "NOP": (0, FullLessFetchesOP),
     "STORE": (1, FullOP),
     "LOAD": (2, RegDeviceOP),

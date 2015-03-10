@@ -1,6 +1,6 @@
-from .struct import Struct
+from tito.tools.struct import Struct
 
-class Code(Struct):
+class BinaryCommand(Struct):
     def __init__(self):
         super().__init__([
             ("op", 8),

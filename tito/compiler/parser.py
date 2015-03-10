@@ -1,16 +1,15 @@
 import re
 
-from .opcodes import codes
-from .generator import Generator, GeneratorLine
-from .code import Code
+from tito.data.commands import commands
+from .ir import IR, IRCommand
 
-class Compiler(object):
+class Parser(object):
 
     def __init__(self):
         pass
 
-    def compile(self, code):
-        gen = Generator()
+    def parse(self, code):
+        ir = IR()
         code_lines = 0
         for ind, line in enumerate(re.split("\n", code)):
             line = line.split(";")[0]
@@ -20,31 +19,34 @@ class Compiler(object):
             tokens = list(filter(lambda x: len(x) > 0, tokens))
             if len(tokens) == 0:
                 continue
-            if self.fake_commands(gen, tokens):
+            if self.fake_commands(ir, tokens):
                 pass
-            elif self.command(gen, code_lines, tokens):
+            elif self.command(ir, code_lines, tokens):
                 code_lines += 1
             else:
                 raise Exception("Line {}, '{}' is bork".format(ind, line))
-        gen.un_symbolise()
-        print(gen)
+        return ir
 
-    def command(self, gen, ind, tokens):
-        line = GeneratorLine(tokens)
-        gen.line(line)
+    def command(self, ir, ind, tokens):
+        line = IRCommand(tokens)
+        ir.add_line(line)
         if line.label is not None:
-            gen.label(line.label, ind)
+            ir.add_label(line.label, ind)
         return line.op is not None
 
-    def fake_commands(self, gen, tokens):
+    def fake_commands(self, ir, tokens):
         if len(tokens) != 3:
             return False
+        try:
+            val = int(tokens[2])
+        except ValueError:
+            return False
         if tokens[1] == 'EQU':
-            gen.equ(tokens[0], int(tokens[2]))
+            ir.add_equ(tokens[0], val)
         elif tokens[1] == 'DC':
-            gen.dc(tokens[0], int(tokens[2]))
+            ir.add_dc(tokens[0], val)
         elif tokens[1] == 'DS':
-            gen.ds(tokens[0], int(tokens[2]))
+            ir.add_ds(tokens[0], val)
         elif tokens[1] == 'DEF':
             pass
         else:
