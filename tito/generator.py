@@ -17,8 +17,11 @@ class GeneratorLine(object):
             i += 1
         self.op = tokens[i]
         i += 1
-        self.rj = tokens[i]
-        i += 1
+
+        if self.op != "JUMP":
+            self.rj = tokens[i]
+            i += 1
+
         if tokens[i][0] in ["@", "="]:
             self.m = tokens[i][0]
             tokens[i] = tokens[i][1:]
@@ -27,6 +30,9 @@ class GeneratorLine(object):
             self.addr = tokens[i].split("(")[0]
         else:
             self.addr = tokens[i]
+        i += 1
+        if i < len(tokens) and "(" in tokens[i]:
+            self.ri = tokens[i].split("(")[1].split(")")[0]
 
     def __repr__(self):
         return "{} {} {} {} {} {}".format(self.label, self.op, self.rj,
@@ -50,7 +56,9 @@ class Generator(object):
             "R4": 4,
             "R5": 5,
             "R6": 6,
-            "SP": 6
+            "SP": 6,
+            "R7": 7,
+            "FP": 7
         }
 
         self.optional_symbols = {
@@ -65,9 +73,18 @@ class Generator(object):
             "DATE": 15
         }
 
+    def equ(self, name, val):
+        self.optional_symbols[name] = val
+
     def dc(self, name, val):
+        pos = len(self.data)
         self.data.append(val)
-        pos = len(self.data) - 1
+        self.symboltable[name] = (True, pos)
+
+    def ds(self, name, val):
+        pos = len(self.data)
+        for i in range(val):
+            self.data.append(0)
         self.symboltable[name] = (True, pos)
 
     def label(self, name, row):
@@ -84,17 +101,32 @@ class Generator(object):
                 self.label(line.label, ind)
             gen["op"].set(codes[line.op][0])
             gen["m"].set(["=", None, "@"].index(line.m))
+
+            if line.op == "STORE" or line.op == "CALL" or line.op[0] == "J":
+                gen["m"].set(0)
+
             gen["rj"].set(self.registers[line.rj])
             gen["ri"].set(self.registers[line.ri])
             if (line.addr in self.optional_symbols and
                 not line.addr in self.symboltable):
                 self.symboltable[line.addr] = (False,
                                                self.optional_symbols[line.addr])
-            sym = self.symboltable[line.addr]
-            if sym[0]:
-                gen["addr"].set(sym[1] + len(self.code))
+
+            if line.addr in self.registers:
+                gen["ri"].set(self.registers[line.addr])
+                gen["m"].set(0)
+            elif line.addr in self.symboltable:
+                sym = self.symboltable[line.addr]
+                if sym[0]:
+                    gen["addr"].set(sym[1] + len(self.code))
+                else:
+                    gen["addr"].set(sym[1])
+            elif gen["m"].value == 0:
+                gen["addr"].set(int(line.addr))
             else:
-                gen["addr"].set(sym[1])
+                raise Exception("Unable to make sense of addr value {} {}".format(ind, line))
+            #for k, v in gen.items():
+            #    print(k, v)
 
 
     def __repr__(self):

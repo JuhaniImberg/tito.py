@@ -22,27 +22,29 @@ class Compiler(object):
                 continue
             if self.fake_commands(gen, tokens):
                 pass
-            elif self.command(gen, tokens):
+            elif self.command(gen, code_lines, tokens):
                 code_lines += 1
             else:
                 raise Exception("Line {}, '{}' is bork".format(ind, line))
         gen.un_symbolise()
         print(gen)
 
-    def command(self, gen, tokens):
+    def command(self, gen, ind, tokens):
         line = GeneratorLine(tokens)
         gen.line(line)
+        if line.label is not None:
+            gen.label(line.label, ind)
         return line.op is not None
 
     def fake_commands(self, gen, tokens):
         if len(tokens) != 3:
             return False
         if tokens[1] == 'EQU':
-            pass
+            gen.equ(tokens[0], int(tokens[2]))
         elif tokens[1] == 'DC':
             gen.dc(tokens[0], int(tokens[2]))
         elif tokens[1] == 'DS':
-            pass
+            gen.ds(tokens[0], int(tokens[2]))
         elif tokens[1] == 'DEF':
             pass
         else:

@@ -8,6 +8,10 @@ class Field(object):
     def set(self, value):
         if value > 2 ** self.size - 1:
             raise Exception("Overflow")
+        if value < 0:
+            value += 1
+            value *= -1
+            value ^= 0xffff
         self.value = value
 
     def get(self, offset):
