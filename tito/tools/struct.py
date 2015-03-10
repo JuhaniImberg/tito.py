@@ -6,16 +6,17 @@ class Field(object):
         self.value = 0
 
     def set(self, value):
-        if value > 2 ** self.size - 1:
+        if abs(value) > 2 ** self.size - 1:
             raise Exception("Overflow")
-        if value < 0:
-            value += 1
-            value *= -1
-            value ^= 0xffff
         self.value = value
 
     def get(self, offset):
-        return self.value << offset
+        value = self.value
+        if self.value < 0:
+            value += 1
+            value *= -1
+            value ^= 0xffff
+        return value << offset
 
     def __repr__(self):
         return str(self.value)
