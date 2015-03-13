@@ -1,35 +1,46 @@
 class OP(object):
     pass
 
+
 class FullOP(OP):
     pass
+
 
 class RegOP(OP):
     pass
 
+
 class SpRegOP(OP):
     pass
+
 
 class SpOnlyOP(OP):
     pass
 
+
 class AddrOP(OP):
     pass
+
 
 class FullOP(OP):
     pass
 
+
 class FullLessFetchesOP(OP):
     pass
+
 
 class RegDeviceOP(OP):
     pass
 
+
 class AddrLessFetchesOP(OP):
     pass
 
+
 class SvcOP(OP):
     pass
+
 
 commands = {
     "NOP": (0, FullLessFetchesOP),

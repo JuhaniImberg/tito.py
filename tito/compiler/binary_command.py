@@ -1,5 +1,6 @@
 from tito.tools.struct import Struct
 
+
 class BinaryCommand(Struct):
     def __init__(self):
         super().__init__([

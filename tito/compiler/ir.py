@@ -4,7 +4,8 @@ from tito.errors import InvalidCommandError, MalformedAddressError
 from tito.data.commands import commands
 from tito.data.registers import registers
 from tito.data.symbols import symbols
-from .binarycommand import BinaryCommand
+from .binary_command import BinaryCommand
+
 
 class IRCommand(object):
     def __init__(self, number, raw, tokens):
@@ -22,6 +23,9 @@ class IRCommand(object):
             i += 1
         self.op = tokens[i]
         i += 1
+
+        if self.op == "NOP":
+            return
 
         if self.op != "JUMP":
             self.rj = tokens[i]
@@ -45,7 +49,6 @@ class IRCommand(object):
 
 
 class IR(object):
-
     def __init__(self):
         self.binary_code = []
         self.ir_code = []

@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 from tito.errors import StructOverflowError
 
+
 class Field(object):
     def __init__(self, size):
         self.size = size
@@ -17,11 +18,12 @@ class Field(object):
         if self.value < 0:
             value += 1
             value *= -1
-            value ^= 0xffff
+            value ^= (2 ** self.size) - 1
         return value << offset
 
     def __repr__(self):
         return str(self.value)
+
 
 class Struct(OrderedDict):
     def __init__(self, fields):

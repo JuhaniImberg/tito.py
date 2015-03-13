@@ -1,11 +1,10 @@
 import re
 
-from tito.data.commands import commands
 from tito.errors import MalformedLineError
 from .ir import IR, IRCommand
 
-class Parser(object):
 
+class Parser(object):
     def __init__(self):
         pass
 
