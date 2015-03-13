@@ -3,8 +3,8 @@ import unittest
 from tito.tools.struct import Struct
 from tito.errors import StructOverflowError
 
-class TestStruct(unittest.TestCase):
 
+class TestStruct(unittest.TestCase):
     def setUp(self):
         self.struct = Struct([("a", 8), ("b", 2), ("c", 8)])
 

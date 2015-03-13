@@ -1,7 +1,9 @@
 import re
 
 from tito.errors import MalformedLineError
-from .ir import IR, IRCommand
+
+from .ir import IR
+from .ir_command import IRCommand
 
 
 class Parser(object):

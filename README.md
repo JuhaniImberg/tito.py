@@ -1,4 +1,4 @@
 tito.py [![Build Status](https://travis-ci.org/JuhaniImberg/tito.py.svg)](https://travis-ci.org/JuhaniImberg/tito.py)
 =======
 
-Currently a compiler, someday a VM.
+Reimplementation of [titokone](https://github.com/titokone/titokone) in Python.

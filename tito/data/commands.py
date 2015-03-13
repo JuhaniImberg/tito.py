@@ -1,53 +1,74 @@
+exists = lambda a: a is not None
+doesnt_exist = lambda a: a is None
+
+
 class OP(object):
-    pass
+    def __init__(self, conditions):
+        self.conditions = conditions
+
+    def validate(self, command):
+        all(value(getattr(command, key)) for key, value in self.conditions.items())
 
 
-class FullOP(OP):
-    pass
+class NoneOP(OP):
+    def __init__(self):
+        super(NoneOP, self).__init__({})
 
 
 class RegOP(OP):
-    pass
+    def __init__(self):
+        super(RegOP, self).__init__({})
 
 
 class SpRegOP(OP):
-    pass
+    def __init__(self):
+        super(SpRegOP, self).__init__({})
 
 
 class SpOnlyOP(OP):
-    pass
+    def __init__(self):
+        super(SpOnlyOP, self).__init__({})
 
 
 class AddrOP(OP):
-    pass
+    def __init__(self):
+        super(AddrOP, self).__init__({})
 
 
 class FullOP(OP):
-    pass
+    def __init__(self):
+        super(FullOP, self).__init__({
+            "addr": exists,
+            "rj": exists
+        })
 
 
 class FullLessFetchesOP(OP):
-    pass
+    def __init__(self):
+        super(FullLessFetchesOP, self).__init__({})
 
 
 class RegDeviceOP(OP):
-    pass
+    def __init__(self):
+        super(RegDeviceOP, self).__init__({})
 
 
 class AddrLessFetchesOP(OP):
-    pass
+    def __init__(self):
+        super(AddrLessFetchesOP, self).__init__({})
 
 
 class SvcOP(OP):
-    pass
+    def __init__(self):
+        super(SvcOP, self).__init__({})
 
 
 commands = {
-    "NOP": (0, FullLessFetchesOP),
-    "STORE": (1, FullOP),
-    "LOAD": (2, RegDeviceOP),
+    "NOP": (0, NoneOP),
+    "STORE": (1, FullLessFetchesOP),
+    "LOAD": (2, FullOP),
     "IN": (3, RegDeviceOP),
-    "OUT": (4, FullOP),
+    "OUT": (4, RegDeviceOP),
     "ADD": (17, FullOP),
     "SUB": (18, FullOP),
     "MUL": (19, FullOP),
@@ -82,3 +103,5 @@ commands = {
     "POPR": (54, SpOnlyOP),
     "SVC": (112, SvcOP)
 }
+
+reverse_commands = dict([(val[0], key) for key, val in commands.items()])
