@@ -27,7 +27,7 @@ class Field(object):
 
 class Struct(OrderedDict):
     def __init__(self, fields):
-        super().__init__()
+        super(Struct, self).__init__()
         self.size = 0
         fields.reverse()
         for item in fields:
