@@ -18,5 +18,7 @@ class TestParser(unittest.TestCase):
 
         ir = self.parser.parse("\n".join(src))
 
-        self.assertEqual(ir.symbol_table["A"], 1)
+        self.assertEqual(ir.symbol_table["A"], (False, 1))
+        self.assertEqual(ir.symbol_table["B"], (True, 0))
+        self.assertEqual(ir.symbol_table["C"], (True, 1))
         self.assertEqual(ir.data, [3, 0, 0])
